@@ -1,0 +1,30 @@
+# Logistic Regression — linear floor baseline.
+# 3 binary heads (revert / mev_victim / dropped), L2 log-loss,
+# class_weight='balanced', 11 standardised numerics. Categorical hashes
+# dropped per paper §4.
+
+model:
+  name: logreg
+  family: sklearn
+  input_view: tabular
+  # SGD on L2 log-loss (same objective as LogisticRegression, scales to 72M rows).
+  C: 1.0
+  max_iter: 20       # SGD epochs
+  class_weight: balanced
+
+features:
+  numeric:
+    - log_gas_price
+    - log_gas_tip
+    - log_gas_fee
+    - log_value
+    - log_gas
+    - log_nonce
+    - log_data_size
+    - timestamp_delta_s
+    - sender_tx_count
+    - sender_avg_gas
+    - mempool_pressure
+  # no categorical block — logreg drops the hashes.
+
+seed: 42

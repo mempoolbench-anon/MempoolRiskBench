@@ -1,0 +1,41 @@
+# Heuristic — rule-based floor baseline
+
+model:
+  name: heuristic
+  family: heuristic
+  input_view: tabular
+
+rules:
+  revert:
+    # gas < calldata_cost + 21000 OR data_4bytes in known-failing selectors
+    gas_floor: 21000
+    # failing selectors: populated during implementation
+
+  mev_victim:
+    # DEX selector AND gas_tip_cap > 2x trailing-60s median gas_tip_cap
+    tip_multiplier: 2.0
+    trailing_window_sec: 60
+
+  drop:
+    # gas_fee_cap < 5th percentile of training-set gas_fee_cap distribution
+    gas_fee_cap_percentile: 5
+
+dex_selectors:
+  # 16 known DEX swap selectors (Uniswap V2/V3/V4, 1inch, 0x)
+  # Populated from build_dataset.py DEX candidate mask
+  - "0x38ed1739"  # Uniswap V2 swapExactTokensForTokens
+  - "0x8803dbee"  # Uniswap V2 swapTokensForExactTokens
+  - "0x7ff36ab5"  # Uniswap V2 swapExactETHForTokens
+  - "0x18cbafe5"  # Uniswap V2 swapExactTokensForETH
+  - "0xfb3bdb41"  # Uniswap V2 swapETHForExactTokens
+  - "0x5ae401dc"  # Uniswap V3 multicall
+  - "0x414bf389"  # Uniswap V3 exactInputSingle
+  - "0xc04b8d59"  # Uniswap V3 exactInput
+  - "0xdb3e2198"  # Uniswap V3 exactOutputSingle
+  - "0xf28c0498"  # Uniswap V3 exactOutput
+  - "0x3593564c"  # Uniswap Universal Router execute
+  - "0x12aa3caf"  # 1inch swap
+  - "0xe449022e"  # 1inch uniswapV3Swap
+  - "0x0502b1c5"  # 1inch unoswap
+  - "0xd9627aa4"  # 0x transformERC20
+  - "0x415565b0"  # 0x sellToUniswap

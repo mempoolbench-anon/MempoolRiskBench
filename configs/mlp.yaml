@@ -1,0 +1,35 @@
+# MLP — single-tx tabular baseline
+
+model:
+  name: mlp
+  family: neural
+  input_view: tabular
+  d_input: 51
+  d_hidden: 256
+  dropout: 0.1
+  # Linear(51,256) → GELU → Dropout(0.1) → Linear(256,256) → GELU → Dropout(0.1)
+
+embeddings:
+  from_addr:  { n_bins: 131072, dim: 16 }
+  to_addr:    { n_bins: 131072, dim: 16 }
+  data_4bytes: { n_bins: 16384,  dim: 8  }
+
+training:
+  optimizer: adamw
+  lr: 1.0e-3
+  weight_decay: 0.01
+  schedule: cosine
+  warmup_fraction: 0.05
+  epochs: 10  # MLP gets more epochs (no sequence overhead)
+  batch_size: 4096  # single-tx, can use larger batch
+  gradient_clip_val: 1.0
+
+loss:
+  revert:  { type: weighted_bce, pos_weight: 10.0, weight: 1.0 }
+  mev:     { type: focal, gamma: 2.0, alpha: 0.95, weight: 2.0 }
+  drop:    { type: bce, weight: 0.5 }
+
+sampling:
+  mev_positive_prob: 0.3
+
+seed: 42

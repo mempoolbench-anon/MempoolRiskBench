@@ -1,0 +1,35 @@
+# LightGBM — identity ablation: drop all categorical hashes
+
+model:
+  name: lightgbm
+  family: sklearn
+  input_view: tabular
+  drop_categorical: true  # documentation flag; LightGBM uses the feature list below
+  max_depth: 8
+  n_estimators: 1000
+  num_leaves: 63
+  learning_rate: 0.05
+  min_child_samples: 200
+  feature_fraction: 0.9
+  bagging_fraction: 0.9
+  bagging_freq: 1
+  early_stopping_rounds: 50
+  use_scale_pos_weight: true
+  # Features: 11 numeric only (no from_addr / to_addr / data_4bytes hashes)
+
+features:
+  numeric:
+    - log_gas_price
+    - log_gas_tip
+    - log_gas_fee
+    - log_value
+    - log_gas
+    - log_nonce
+    - log_data_size
+    - timestamp_delta_s
+    - sender_tx_count
+    - sender_avg_gas
+    - mempool_pressure
+  categorical: []
+
+seed: 42

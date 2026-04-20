@@ -1,0 +1,19 @@
+# data uploaded
+/data/
+
+checkpoints/
+results/
+lightning_logs/
+wandb/
+*.ckpt
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+
+.vscode/

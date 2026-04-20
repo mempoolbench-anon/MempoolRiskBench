@@ -1,0 +1,54 @@
+# LSTM — recurrent sequence baseline
+
+model:
+  name: lstm
+  family: neural
+  input_view: sequence
+  d_input: 51
+  d_hidden: 256
+  n_layers: 2
+  bidirectional: false  # causal
+  seq_len: 1024
+  dropout: 0.1  # inter-layer dropout inside nn.LSTM
+
+embeddings:
+  from_addr:  { n_bins: 131072, dim: 16 }
+  to_addr:    { n_bins: 131072, dim: 16 }
+  data_4bytes: { n_bins: 16384,  dim: 8  }
+
+input_proj:
+  in_features: 51
+  out_features: 256
+  norm: layernorm
+
+heads:
+  revert:  { out: 1, activation: sigmoid }
+  mev:     { out: 1, activation: sigmoid }
+  drop:    { out: 1, activation: sigmoid }
+
+training:
+  optimizer: adamw
+  lr: 1.0e-3
+  weight_decay: 0.01
+  schedule: cosine
+  warmup_fraction: 0.05
+  epochs: 5
+  batch_size: 32
+  seq_len: 1024
+  warmup_tokens: 64
+  gradient_clip_val: 1.0
+
+loss:
+  revert:  { type: weighted_bce, pos_weight: 10.0, weight: 1.0 }
+  mev:     { type: focal, gamma: 2.0, alpha: 0.95, weight: 2.0 }
+  drop:    { type: bce, weight: 0.5 }
+
+sampling:
+  mev_positive_prob: 0.3
+
+checkpoint:
+  save_every_epoch: true
+  save_optimizer: true
+  save_lr_scheduler: true
+
+seed: 42

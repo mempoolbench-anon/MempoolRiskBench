@@ -1,0 +1,46 @@
+# Install with:
+#   pip install -r requirements.txt
+# Requires python 3.12 and NVIDIA driver supporting CUDA 13.0.
+# flash-attn, causal-conv1d, and mamba-ssm build from source; ensure a CUDA
+# toolchain is available and pass `--no-build-isolation` if wheels are missing.
+
+--extra-index-url https://download.pytorch.org/whl/cu130
+--find-links https://data.pyg.org/whl/torch-2.11.0+cu130.html
+
+# PyTorch
+torch==2.11.0
+torchvision
+torchaudio
+
+# PyTorch Geometric
+torch_geometric
+pyg_lib
+torch_scatter
+torch_sparse
+torch_cluster
+
+# ML essentials
+lightning
+xformers
+numpy
+pandas
+pyarrow
+scipy
+matplotlib
+scikit-learn
+transformers
+datasets
+accelerate
+xgboost
+lightgbm
+tilelang
+wandb
+jupyterlab
+tqdm
+packaging
+wheel
+
+# Build below from source:
+# flash-attn
+# causal-conv1d
+# mamba-ssm @ git+https://github.com/state-spaces/mamba.git
